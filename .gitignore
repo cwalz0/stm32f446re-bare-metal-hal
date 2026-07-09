@@ -1,0 +1,10 @@
+# build artifacts
+
+build/
+*.o
+*.elf
+*.bin
+*.map
+
+# macos files
+.DS_Store
