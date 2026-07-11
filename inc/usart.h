@@ -13,6 +13,7 @@
 
 void USART2_Init(void);
 void USART2_WriteChar(int ch);
+void USART2_WriteString(char *str);
 
 
 

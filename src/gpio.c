@@ -18,10 +18,10 @@ void GPIO_Init(uint32_t port_base, GPIO_InitTypeDef *init_struct){
 	
 	if (init_struct->Mode == GPIO_MODE_ALT){
 		if (init_struct->Pin < 8) {
-			*afrl &= ~(15U << pin * 4);
-			*afrl |= (init_struct->Alternate << pin * 4);
+			*afrl &= ~(15U << pin * 4U);
+			*afrl |= (init_struct->Alternate << (pin * 4));
 		} else if (init_struct->Pin >= 8) {
-			*afrh &= ~(15U << (pin - 8) * 4);
+			*afrh &= ~(15U << (pin - 8) * 4U);
 			*afrh |= (init_struct->Alternate << (pin - 8) * 4);
 		}
 	}
