@@ -6,5 +6,7 @@ build/
 *.bin
 *.map
 
+compile_commands.json
+
 # macos files
 .DS_Store

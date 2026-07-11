@@ -1,4 +1,5 @@
 #include "rcc.h"
+#include <stdint.h>
 
 
 void SystemClockConfig(void){
@@ -10,7 +11,7 @@ void SystemClockConfig(void){
 	FLASH_ACR |= (1 << 0) | (1 << 2);
 
 	// enable power interface clock
-	APB1ENR |= (1 << 28);
+	RCC_APB1ENR |= (1 << 28);
 
 	// set PLLP = 2 (0,0) 16, 17
 	RCC_PLLCFGR &= ~(3 << 16);
@@ -44,4 +45,8 @@ void SystemClockConfig(void){
 
 	while ((RCC_CFGR & (3 << 2)) != (2 << 2)){ continue; }
 	
+}
+
+void RCC_EnableClock(uint32_t bus_offset, uint8_t bit_position){
+	*(volatile uint32_t *)(RCC_BASE + bus_offset) |= (1 << bit_position);
 }
