@@ -7,6 +7,9 @@
 #include <stdint.h>
 
 int main(void) {
+
+	*(volatile uint32_t *)(0xE000ED00 + 0x88) |= (0xF << 20);
+
 	SystemClockConfig();
 
 	RCC_EnableClock(AHB1ENR_OFFSET, 0);
@@ -33,13 +36,19 @@ int main(void) {
 
 	
 	while (1) {
-		GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_SET);
-		USART2_WriteString("LED ON\r\n");
-		Delay_ms(1000);
+		// wait for user input from terminal
+		int input_char = USART2_ReadChar();
 
-		GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_RESET);
-		USART2_WriteString("LED OFF\r\n");
-		Delay_ms(1000);
+		USART2_WriteChar(input_char); // output user command
+		USART2_WriteString("\r\n"); // new line
+
+		if (input_char == '1') {
+			GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_SET);
+			USART2_WriteString("COMMAND: LED ON\r\n");
+		} else if (input_char == '0') {
+			GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_RESET);
+			USART2_WriteString("COMMAND: LED OFF\r\n");
+		}
 	}
 	return 0;
 }

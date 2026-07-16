@@ -35,6 +35,13 @@ void USART2_Init(){
 	return;
 }
 
+int USART2_ReadChar(void){
+	while ((*(volatile uint32_t *)(USART2_BASE + USART_SR_OFFSET) & (1U << 5)) == 0){ // wait for data ready to be read
+		continue;
+	}
+	return *(volatile uint32_t *)(USART2_BASE + USART_DR_OFFSET) & 0xFF;
+	
+}
 
 void USART2_WriteChar(int ch){
 	while ((*(volatile uint32_t *)(USART2_BASE + USART_SR_OFFSET) & (1U << 7)) == 0){ // wait for data is not being transferred to the shift register

@@ -5,6 +5,7 @@ build/
 *.elf
 *.bin
 *.map
+AHT30.*
 
 compile_commands.json
 

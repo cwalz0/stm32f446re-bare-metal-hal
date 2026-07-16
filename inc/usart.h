@@ -12,6 +12,7 @@
 #define USART_GTPR_OFFSET 0x18U
 
 void USART2_Init(void);
+int USART2_ReadChar(void);
 void USART2_WriteChar(int ch);
 void USART2_WriteString(char *str);
 
