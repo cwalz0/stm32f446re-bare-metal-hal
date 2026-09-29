@@ -1,6 +1,7 @@
 #ifndef USART_H
 #define USART_H
 
+#include <stdint.h>
 #define USART2_BASE 0x40004400U
 
 #define USART_SR_OFFSET 0x00U
@@ -14,7 +15,10 @@
 void USART2_Init(void);
 int USART2_ReadChar(void);
 void USART2_WriteChar(int ch);
+void USART2_WriteInt(int value);
+void USART2_WriteFloat(float value);
 void USART2_WriteString(char *str);
+void USART2_WriteHex(uint8_t value);
 
 
 

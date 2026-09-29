@@ -2,9 +2,18 @@
 #include "gpio.h"
 #include "systick.h"
 #include "usart.h"
+#include "i2c.h"
 
 #include "board.h"
+#include "aht30.h"
+#include "SSD1306.h"
+
+#include "app_sensor.h"
+#include "app_display.h"
+#include "app_log.h"
+
 #include <stdint.h>
+
 
 int main(void) {
 
@@ -24,31 +33,39 @@ int main(void) {
 	GPIO_Init(LED2_PORT, &led_init);
 
 	GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_SET);
-	Delay_ms(500);
+	Delay_ms(250);
 	GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_RESET);
-	Delay_ms(500);
+	Delay_ms(10);
 
 
 	USART2_Init();
-	USART2_WriteString("\nUSART INITIALIZED\r\n");
+	USART2_WriteString("\nUSART INITIALIZED\r");
+
+	I2C_Init();
+	USART2_WriteString("\nI2C INITIALIZED\r");
+	
+	AHT30_Init();
+	USART2_WriteString("\nSENSOR INITIALIZED\r");
+
+	SSD1306_Init();
+	USART2_WriteString("\nDISPLAY INITIALIZED\r\n");
+
 	GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_SET);
 
+	App_Sensor_Init();
+	App_Display_Init();
+	App_Log_Init();
 
-	
 	while (1) {
-		// wait for user input from terminal
-		int input_char = USART2_ReadChar();
+		App_Sensor_Run();
 
-		USART2_WriteChar(input_char); // output user command
-		USART2_WriteString("\r\n"); // new line
+		App_Log_Run();
 
-		if (input_char == '1') {
-			GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_SET);
-			USART2_WriteString("COMMAND: LED ON\r\n");
-		} else if (input_char == '0') {
-			GPIO_WritePin(LED2_PORT, LED2_PIN, GPIO_PIN_RESET);
-			USART2_WriteString("COMMAND: LED OFF\r\n");
-		}
+		App_Display_Run();
+
 	}
 	return 0;
 }
+
+
+

@@ -14,15 +14,6 @@ SECTIONS{
 		. = ALIGN(4);
 		_etext = . ;
 	} > FLASH
-
-	.bss : {
-		. = ALIGN(4);
-		_sbss = .;
-		*(.bss) 
-		*(COMMON)
-		. = ALIGN(4);
-		_ebss = .;
-	} > SRAM
 	
 	.data : {
 		. = ALIGN(4);
@@ -32,4 +23,19 @@ SECTIONS{
 		. = ALIGN(4);
 		_edata = .;
 	} > SRAM AT > FLASH
+
+	.bss : {
+		. = ALIGN(4);
+		_sbss = .;
+		__bss_start__ = .;
+		*(.bss) 
+		*(COMMON)
+		. = ALIGN(4);
+		_ebss = .;
+		__bss_end__ = .;
+	} > SRAM
+
+	. = ALIGN(4);
+	end = .;
+
 }

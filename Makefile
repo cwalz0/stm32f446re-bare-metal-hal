@@ -5,9 +5,9 @@ CC      = arm-none-eabi-gcc
 OBJCOPY = arm-none-eabi-objcopy
 SIZE    = arm-none-eabi-size
 
-MCU     = -mcpu=cortex-m4 -mthumb
-CFLAGS  = $(MCU) -O0 -g -Wall -Iinc -mfloat-abi=hard -mfpu=fpv4-sp-d16
-LDFLAGS = -T linker.ld -nostdlib $(MCU)
+MCU     = -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CFLAGS  = $(MCU) -O0 -g -Wall -Iinc
+LDFLAGS = -T linker.ld $(MCU) --specs=nano.specs --specs=nosys.specs
 
 # ==============================================================================
 # Project Structure

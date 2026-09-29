@@ -1,8 +1,7 @@
 #ifndef I2C_H
 #define I2C_H
 #include <stdint.h>
-#define I2C1_BASE 0x4005400U
-
+#define I2C1_BASE 0x40005400U
 #define I2C_CR1_OFFSET 0x00U
 #define I2C_CR2_OFFSET 0x04U
 #define I2C_OAR1_OFFSET 0X08U

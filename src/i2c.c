@@ -2,7 +2,6 @@
 #include "gpio.h"
 #include "rcc.h"
 #include <stdint.h>
-#include <sys/types.h>
 
 void I2C_Init(void){
 	RCC_EnableClock(AHB1ENR_OFFSET, 1); // power GPIO B
@@ -24,13 +23,13 @@ void I2C_Init(void){
 	GPIO_Init(GPIOB, &I2C_INIT);
 
 
-	*(volatile uint32_t *)(I2C1_BASE + I2C_CR2_OFFSET) |= (45U << 0); // set freq to 45MHZ
+	*(volatile uint32_t *)(I2C1_BASE + I2C_CR2_OFFSET) = (45U << 0); // set freq to 45MHZ
 	
-	*(volatile uint32_t *)(I2C1_BASE + I2C_CCR_OFFSET) |= (225U << 0); // 225 ticks (apb1)
+	*(volatile uint32_t *)(I2C1_BASE + I2C_CCR_OFFSET) = (225U << 0); // 225 ticks (apb1)
 
-	*(volatile uint32_t *)(I2C1_BASE + I2C_TRISE_OFFSET) |= (46U << 0); // wait 46 ticks for volatage to stablize
+	*(volatile uint32_t *)(I2C1_BASE + I2C_TRISE_OFFSET) = (46U << 0); // wait 46 ticks for volatage to stablize
 
-	*(volatile uint32_t *)(I2C1_BASE + I2C_CR1_OFFSET) |= (1U << 0); // enable peripheral
+	*(volatile uint32_t *)(I2C1_BASE + I2C_CR1_OFFSET) = (1U << 0); // enable peripheral
 
 	return;
 }
@@ -54,19 +53,29 @@ void I2C_Stop(void){
 }
 
 void I2C_WriteAddress(uint8_t address){
-	// overwrite register
-	*(volatile uint32_t *)(I2C1_BASE + I2C_DR_OFFSET) = ((address << 1) << 0); // shift address by 1 so 0 bit is set to 0 (write mode)
-	// also aht30 is 7bit
-	
-	while ((*(volatile uint32_t *)(I2C1_BASE + I2C_SR1_OFFSET) & (1 << 1)) == 0){
-		continue; // check for addr to be set to 1 ( recieved address matched)
-	}
-	
-	// dummy read to unfreeze the bus
-	// gotta read sr1 and sr2 
-	volatile uint32_t dummy_read = *(volatile uint32_t *)(I2C1_BASE + I2C_SR1_OFFSET);
-	dummy_read =*(volatile uint32_t *)(I2C1_BASE + I2C_SR2_OFFSET);
-	(void)dummy_read; 
+    *(volatile uint32_t *)(I2C1_BASE + I2C_DR_OFFSET) = (address << 0);
+    
+    while (1) {
+        uint32_t sr1 = *(volatile uint32_t *)(I2C1_BASE + I2C_SR1_OFFSET);
+        
+        // Success: Address sent and ACK received
+        if (sr1 & (1U << 1)) {
+            break; 
+        }
+        
+        // Failure: Address sent but NO ACK received (NACK)
+        if (sr1 & (1U << 10)) { 
+            // Clear the AF flag by writing 0 to it so it doesn't lock the register
+            *(volatile uint32_t *)(I2C1_BASE + I2C_SR1_OFFSET) &= ~(1U << 10);
+            I2C_Stop(); // Release the bus
+            return; // Escape the infinite loop
+        }
+    }
+    
+    // Clear ADDR flag by reading SR1 then SR2
+    volatile uint32_t dummy_read = *(volatile uint32_t *)(I2C1_BASE + I2C_SR1_OFFSET);
+    dummy_read = *(volatile uint32_t *)(I2C1_BASE + I2C_SR2_OFFSET);
+    (void)dummy_read; 
 }
 
 void I2C_WriteData(uint8_t data){

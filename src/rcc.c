@@ -58,5 +58,5 @@ void SystemClockConfig(void){
 }
 
 void RCC_EnableClock(uint32_t bus_offset, uint8_t bit_position){
-	*(volatile uint32_t *)(RCC_BASE + bus_offset) |= (1 << bit_position);
+	*(volatile uint32_t *)(RCC_BASE + bus_offset) |= (1U << bit_position);
 }

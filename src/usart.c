@@ -52,6 +52,50 @@ void USART2_WriteChar(int ch){
 
 }
 
+void USART2_WriteInt(int value){
+	char str[10];
+	int i = 0;
+	if (value == 0) {
+		USART2_WriteChar('0');
+	} else if (value < 0) {
+		USART2_WriteChar('-');
+		value = -value;
+	}
+	while (value != 0) {
+		str[i++] = (value % 10) + '0';
+		value /= 10;
+	}
+	while (i > 0) {
+		USART2_WriteChar(str[--i]);
+	}
+}
+
+void USART2_WriteFloat(float value){
+	if (value < 0.0f){
+		USART2_WriteChar('-');
+		value = -value;
+	}
+	int whole = (int)value;
+
+	// extract decimal (2 decimal places)
+	float remainder = (value - (float)whole) + 0.005f; // .005 keeps it from truncating
+	int frac = (int)(remainder * 100.0f);
+
+	if (frac >= 100) {
+		whole += 1;
+		frac = 0;
+	}
+
+	// print whole num
+	USART2_WriteInt(whole);
+	USART2_WriteString(".");
+	if (frac < 10) {
+		USART2_WriteChar('0');
+	}
+	USART2_WriteInt(frac);
+}
+
+
 void USART2_WriteString(char *str){
 	while (*str != '\0'){
 		USART2_WriteChar(*str); // write the current character in the string
@@ -60,5 +104,15 @@ void USART2_WriteString(char *str){
 	return;
 }
 
+void USART2_WriteHex(uint8_t value){
+	char hex_chars[] = "0123456789ABCDEF";
+	char buffer[2];
+	
+	buffer[0] = hex_chars[(value >> 4) & 0x0F];
+	buffer[1] = hex_chars[value & 0x0F];
 
+	USART2_WriteChar(buffer[0]);
+	USART2_WriteChar(buffer[1]);
+	USART2_WriteString("\r\n");
+}
 

@@ -48,3 +48,5 @@ void GPIO_WritePin(uint32_t port_base, uint8_t pin, GPIO_PinState state) {
 		*bssr = (1U << (pin + 16U)); // Upper 16 bits to SET
 	}
 }
+
+
