@@ -1,7 +1,7 @@
 # STM32F446RE Bare-Metal HAL & Environmental Telemetry Node
 
 <p align="center">
-  <img src="docs/demo.gif" alt="Bare-Metal STM32 SSD1306 & AHT30 Demo" width="520" />
+  <img src="docs/demo.gif?v=2" alt="Bare-Metal STM32 SSD1306 & AHT30 Demo" width="520" />
 </p>
 
 <p align="center">
